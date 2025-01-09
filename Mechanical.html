@@ -124,7 +124,8 @@ hr {
     <script>
         // Function to load data from LocalStorage and display it
         function loadData() {
-            const storedData = JSON.parse(localStorage.getItem("database")) || [];
+		 const username = "jiel29";
+            const storedData = document.getElementById("repoContainer");
             const tableBody = document.getElementById("recordTable").getElementsByTagName("tbody")[0];
             tableBody.innerHTML = ""; // Clear existing rows
 
@@ -163,9 +164,9 @@ hr {
             
             if (name && age) {
                 const newRecord = {name: name, age: parseInt(age), item: item, date: date, quote: quote};
-                const storedData = JSON.parse(localStorage.getItem("database")) || [];
+                const storedData = JSON.parse(localStorage.getItem("repoContainer")) || [];
                 storedData.push(newRecord);
-                localStorage.setItem("database", JSON.stringify(storedData));
+                localStorage.setItem("repoContainer", JSON.stringify(storedData));
 
                 document.getElementById("message").textContent = "Record added successfully!";
                 loadData(); // Refresh the table
@@ -178,9 +179,9 @@ hr {
 
         // Function to delete a record
         function deleteRecord(index) {
-            const storedData = JSON.parse(localStorage.getItem("database")) || [];
+            const storedData = JSON.parse(localStorage.getItem("repoContainer")) || [];
             storedData.splice(index, 1);
-            localStorage.setItem("database", JSON.stringify(storedData));
+            localStorage.setItem("repoContainer", JSON.stringify(storedData));
             loadData(); // Refresh the table after deletion
         }
 
