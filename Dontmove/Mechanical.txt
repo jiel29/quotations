@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Offline Database</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
+        input[type="text"], input[type="number"] { padding: 8px; width: 200px; }
+        input[type="submit"] { padding: 8px 12px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .message { color: green; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <h1>Offline Database</h1>
+
+    <form id="dataForm">
+        <label for="item">PO#</label>
+        <input type="text" id="item" required><br><br>
+        <label for="name">Description</label>
+        <input type="text" id="name" required><br><br>
+        <label for="age">Price:</label>
+        <input type="number" id="age" required><br><br>
+        <input type="submit" value="Add Record">
+    </form>
+
+    <div class="message" id="message"></div>
+<h3>Search in Table</h3>
+<input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for names..">
+
+
+    <h2>Stored Records</h2> 
+    <table id="recordTable">
+        <thead>
+            <tr>
+                <th>PO#</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Records will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load data from LocalStorage and display it
+        function loadData() {
+            const storedData = JSON.parse(localStorage.getItem("database")) || [];
+            const tableBody = document.getElementById("recordTable").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            storedData.forEach((record, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${record.item}</td>
+                    <td>${record.name}</td>
+                    <td>${record.age}</td>
+                    <td><button onclick="deleteRecord(${index})">Delete</button></td>
+                `;
+            });
+        }
+
+        // Function to add a new record to the database
+        function addRecord(event) {
+            event.preventDefault(); // Prevent the form from refreshing the page
+            const item = document.getElementById("item").value;
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value;
+            
+            if (name && age) {
+                const newRecord = {name: name, age: parseInt(age), item: item};
+                const storedData = JSON.parse(localStorage.getItem("database")) || [];
+                storedData.push(newRecord);
+                localStorage.setItem("database", JSON.stringify(storedData));
+
+                document.getElementById("message").textContent = "Record added successfully!";
+                loadData(); // Refresh the table
+                document.getElementById("dataForm").reset(); // Clear the form
+            } else {
+                document.getElementById("message").textContent = "Please fill out all fields!";
+            }
+        }
+
+        // Function to delete a record
+        function deleteRecord(index) {
+            const storedData = JSON.parse(localStorage.getItem("database")) || [];
+            storedData.splice(index, 1);
+            localStorage.setItem("database", JSON.stringify(storedData));
+            loadData(); // Refresh the table after deletion
+        }
+
+        // Event listener to handle form submission
+        document.getElementById("dataForm").addEventListener("submit", addRecord);
+
+        // Load existing records when the page loads
+        window.onload = loadData;
+
+function searchTable() {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("recordTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows (except the header row)
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none"; // Initially hide all rows
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show the row if it matches
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator Offline Database</title>
+    <style>
+Body {
+ background-image: url('Scheirman.png');
+            background-size: cover;
+            background-position: top-center;
+            background-attachment: fixed;
+            height: 500vh;
+            margin: 0;
+	    opacity: 0.8;
+}
+ .tab-button {
+            background-color: lightblue;
+            border: 2px solid black;
+            padding: 10px;
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 5px;
+            border-top-left-radius: 15px;
+        }
+
+        /* Active tab button */
+        .active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Content inside the tabs */
+        .tab-content {
+            display: none;
+            padding: 0px;
+            margin-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Show the content of the active tab */
+        .active-content {
+            display: block;
+        }
+
+hr {
+            border: 0;
+            height: 2px;
+            background-color: #333;
+            width: 100%;
+            margin: 20px 0;
+        }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+.scroll-container {
+            width: 1800px;
+            height: 550px;
+            overflow: auto; /* Both vertical and horizontal scrollbars will appear if necessary */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px;  background-color: white; }
+        th, td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
+        input[type="text"], input[type="number"] { padding: 8px; width: 200px; background-color: lightblue;}
+        input[type="submit"] { padding: 8px 12px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .message { color: green; font-size: 18px; }
+    </style>
+</head>
+<body>
+<div>
+ 	<button class="tab-button" onclick="window.location.href='Home.html';">Home</button>
+        <button class="tab-button" onclick="window.location.href='Mechanical.html';">Mechanical</button>
+        <button class="tab-button" onclick="window.location.href='Plumbing.html';">Plumbing</button>
+        <button class="tab-button" onclick="window.location.href='Fire Protection.html';")">Fire Protection</button>
+        <button class="tab-button" onclick="window.location.href='Elevator.html';">Elevator</button>
+        <button class="tab-button" onclick="window.location.href='STP.html';">STP</button>
+    </div>
+<hr>
+    <h1>Qouted Elevator-Materials & Equipments Pricing Reference Offline Database</h1>
+
+    <form id="dataForm">
+        <label for="date">Date:</label>
+        <input type="text" id="date" placeholder="Enter date of quotation" required>
+        <label for="item">PO#:</label>
+        <input type="text" id="item" placeholder="Enter Brand Name" required>
+        <label for="name">Description:</label>
+        <input type="text" id="name" placeholder="Materials Specs"required>
+        <label for="age"  >Price:</label>
+        <input type="number" id="age" oninput="formatNumberWithCommas()" placeholder="Enter SRP" required>
+        <label for="quote">Quote Link</label>
+        <input type="text" id="quote" placeholder="Enter Quotation Local storage address" required>	
+        <input type="submit" value="Add Record">
+    </form>
+
+    <div class="message" id="message"></div>
+<h3>Search in Table</h3> <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for materials..">
+
+
+    <h2>Stored Records</h2> 
+<hr>
+  <div class="scroll-container">  <table id="recordTable">
+
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>PO#</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quotation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>     </div>
+</head>
+<body>
+  
+    </div>
+</body>
+        <tbody>
+            <!-- Records will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load data from LocalStorage and display it
+        function loadData() {
+            const storedData = JSON.parse(localStorage.getItem("database4")) || [];
+            const tableBody = document.getElementById("recordTable").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            storedData.forEach((record, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+		     <td>${record.date}</td>
+                    <td>${record.item}</td>
+                    <td>${record.name}</td>
+                    <td>${record.age}</td>
+                    <td><a href='file:///${record.quote}'>open</a></td>
+                    <td><button onclick="deleteRecord(${index})">Delete</button></td>
+   
+                `;
+            });
+        function formatNumberWithCommas() {
+            let number = document.getElementById("age").value;
+            if (!isNaN(number) && number.trim() !== "") {
+                // Format number with commas
+                let formattedNumber = Number(number).toLocaleString();
+                document.getElementById('${record.age}').innerText = "Formatted Number: " + formattedNumber;
+            } else {
+                document.getElementById('${record.age}').innerText = "Please enter a valid number.";
+            }
+        }
+}
+
+        // Function to add a new record to the database
+        function addRecord(event) {
+            event.preventDefault(); // Prevent the form from refreshing the page
+           const date = document.getElementById("date").value;
+            const item = document.getElementById("item").value;
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value; 
+	    const quote = document.getElementById("quote").value;
+            
+            if (name && age) {
+                const newRecord = {name: name, age: parseInt(age), item: item, date: date, quote: quote};
+                const storedData = JSON.parse(localStorage.getItem("database4")) || [];
+                storedData.push(newRecord);
+                localStorage.setItem("database4", JSON.stringify(storedData));
+
+                document.getElementById("message").textContent = "Record added successfully!";
+                loadData(); // Refresh the table
+                document.getElementById("dataForm").reset(); // Clear the form
+            } else {
+                document.getElementById("message").textContent = "Please fill out all fields!";
+            }
+        }
+
+
+        // Function to delete a record
+        function deleteRecord(index) {
+            const storedData = JSON.parse(localStorage.getItem("database4")) || [];
+            storedData.splice(index, 1);
+            localStorage.setItem("database4", JSON.stringify(storedData));
+            loadData(); // Refresh the table after deletion
+        }
+
+        // Event listener to handle form submission
+        document.getElementById("dataForm").addEventListener("submit", addRecord);
+
+        // Load existing records when the page loads
+        window.onload = loadData;
+
+function searchTable() {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("recordTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows (except the header row)
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none"; // Initially hide all rows
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show the row if it matches
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    </script>
+
+</body>
+</html>
