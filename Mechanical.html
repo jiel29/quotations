@@ -69,7 +69,7 @@ hr {
 </head>
 <body>
 <div>
- 	<button class="tab-button" onclick="window.location.href='index.html';">Home</button>
+ 	<button class="tab-button" onclick="window.location.href='Home.html';">Home</button>
         <button class="tab-button" onclick="window.location.href='Mechanical.html';">Mechanical</button>
         <button class="tab-button" onclick="window.location.href='Plumbing.html';">Plumbing</button>
         <button class="tab-button" onclick="window.location.href='Fire Protection.html';")">Fire Protection</button>
@@ -124,7 +124,7 @@ hr {
     <script>
         // Function to load data from LocalStorage and display it
         function loadData() {
-            const storedData = document.getElementById("database");
+            const storedData = JSON.parse(localStorage.getItem("database")) || [];
             const tableBody = document.getElementById("recordTable").getElementsByTagName("tbody")[0];
             tableBody.innerHTML = ""; // Clear existing rows
 
@@ -135,7 +135,7 @@ hr {
                     <td>${record.item}</td>
                     <td>${record.name}</td>
                     <td>${record.age}</td>
-                    <td><a href="${record.quote}.pdf">open</a></td>
+                    <td><a href='file:///${record.quote}'>open</a></td>
                     <td><button onclick="deleteRecord(${index})">Delete</button></td>
    
                 `;
@@ -163,7 +163,7 @@ hr {
             
             if (name && age) {
                 const newRecord = {name: name, age: parseInt(age), item: item, date: date, quote: quote};
-               const storedData = JSON.parse(localStorage.getItem("database")) || [];
+                const storedData = JSON.parse(localStorage.getItem("database")) || [];
                 storedData.push(newRecord);
                 localStorage.setItem("database", JSON.stringify(storedData));
 
